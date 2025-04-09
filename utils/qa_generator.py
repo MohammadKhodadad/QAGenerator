@@ -37,8 +37,10 @@ def generate_qa(text: str,client:OpenAI, temperature: float = 0.7) -> dict:
     """
     prompt = (
         "You are provided with a text in chemistry"
-        "Your task is to generate a single, focused question and answer pair about the text." 
+        "Your task is to generate a single, focused question and answer pair about the text."
+        "The question should imitate a real questions for RAG" 
         "The answer to your question should be explicitly found in the description."
+        "Make sure you do not point to a text in, such as 'based on text', or 'according to the description'"
         "Return a JSON object with keys 'question' and 'answer'.\n\n"
         f"Text:\n{text}\n"
     )
