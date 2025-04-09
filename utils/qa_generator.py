@@ -4,7 +4,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 import tqdm
 
-
 def ask_openai(client: OpenAI, prompt: str) -> str:
     """
     Send a prompt to the OpenAI client and return the response content.

@@ -27,6 +27,7 @@ def load_chemrxiv_texts(
     return ds['paragraph']
 
 
+
 if __name__ == "__main__":
     texts = load_chemrxiv_texts()
     print(f"Loaded {len(texts)} paragraphs.")

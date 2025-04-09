@@ -37,6 +37,7 @@ def compute_perplexity(text: str, tokenizer, model) -> float:
     return math.exp(neg_log_likelihood / input_ids.size(1))
 
 
+
 def select_top_texts_by_perplexity(
     texts,
     top_k: int = 5000,

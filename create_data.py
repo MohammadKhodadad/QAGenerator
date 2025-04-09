@@ -8,28 +8,32 @@ from utils.perplexity import select_top_texts_by_perplexity
 
 
 def main():
+    TOPK=5000
     # Phase 1: Load the 'cc-by-nc' train split of ChemRxiv-Paragraphs
 
     # texts = load_chemrxiv_texts(config="cc-by-nc", split="train", cache_dir="data")
     # print(f"Loaded {len(texts)} texts from ChemRxiv-Paragraphs 'cc-by-nc' split 'train'.")
 
-    # Phase 1.5: Select top 5000 texts by perplexity
+    # Phase 1.5: Select top TOPK texts by perplexity
 
     top_texts_file = os.path.join("data", "top_texts.json")
-    # print("Selecting top 5000 most informative texts by perplexity...")
+    # print("Selecting top TOPK most informative texts by perplexity...")
     # top_texts = select_top_texts_by_perplexity(
     #     texts=texts,
-    #     top_k=50,
+    #     top_k=TOPK,
     #     model_name="gpt2",
     #     output_file=top_texts_file
     # )
     # print(f"Selected {len(top_texts)} texts and saved to {top_texts_file}.")
+    
+    # Load already saved file
     with open(top_texts_file, "r", encoding="utf-8") as f:
         top_texts = json.load(f)
 
 
+
     # Phase 2: Generate QA pairs for the top texts and save to JSON
-    output_file = os.path.join("data", "chemrxiv_qa_top5000.json")
+    output_file = os.path.join("data", f"chemrxiv_qa_top{TOPK}.json")
     print(f"Generating QA pairs for {len(top_texts)} texts...")
     dotenv.load_dotenv()
 
