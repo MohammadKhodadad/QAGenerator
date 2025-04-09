@@ -9,6 +9,7 @@ from utils.perplexity import select_top_texts_by_perplexity
 
 def main():
     TOPK=500
+    METHOD="model"
     # Phase 1: Load the 'cc-by-nc' train split of ChemRxiv-Paragraphs
 
     texts = load_chemrxiv_texts(config="cc-by-nc", split="train", cache_dir="data")
@@ -16,10 +17,11 @@ def main():
 
     # Phase 1.5: Select top TOPK texts by perplexity
 
-    top_texts_file = os.path.join("created_data", f"top{TOPK}_texts.json")
+    top_texts_file = os.path.join("created_data", f"top{TOPK}_texts_{METHOD}.json")
     print("Selecting top TOPK most informative texts by perplexity...")
     top_texts = select_top_texts_by_perplexity(
         texts=texts,
+        method=METHOD,
         top_k=TOPK,
         model_name="gpt2",
         output_file=top_texts_file
@@ -33,7 +35,7 @@ def main():
 
 
     # Phase 2: Generate QA pairs for the top texts and save to JSON
-    output_file = os.path.join("created_data", f"chemrxiv_qa_top{TOPK}.json")
+    output_file = os.path.join("created_data", f"chemrxiv_qa_top{TOPK}_{METHOD}.json")
     print(f"Generating QA pairs for {len(top_texts)} texts...")
     dotenv.load_dotenv()
 
