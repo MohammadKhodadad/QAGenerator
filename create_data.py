@@ -8,7 +8,7 @@ from utils.perplexity import select_top_texts_by_perplexity
 
 
 def main():
-    TOPK=500
+    TOPK=5000
     METHOD="model"
     # Phase 1: Load the 'cc-by-nc' train split of ChemRxiv-Paragraphs
 
