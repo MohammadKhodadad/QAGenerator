@@ -95,7 +95,7 @@ def generate_bulk_qa(
             "Correct Question: How does extended conjugation in a fluorescent dye influence its absorption and emission wavelengths?"
 
             "Keep your questions simple. "
-            "As an example: " \
+            "As an example: " 
             "Text: Once the system is in the diffusive region, the MSD graph follows a straight-line behavior, and the diffusion coefficient, D r , can be calculated from the slope of the straight line against the time difference. It is worth noting that if there is a correlated diffusion, the self-diffusion differs from the collective diffusion. The self-and collective diffusion coefficients are succinctly linked by Haven's ratio (H R ), given by, H R = D c /D r ."
             "Correct Question: What connects self-diffusion and collective diffusion coefficients in a system?"
             "However, there are some cases that should be avoided. "
