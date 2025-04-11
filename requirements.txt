@@ -1,0 +1,9 @@
+python-dotenv
+openai
+tqdm
+datasets
+numpy<2.0.0
+blingfire
+cached_path
+pandas
+git+https://github.com/nicholishen/tooldantic.git
