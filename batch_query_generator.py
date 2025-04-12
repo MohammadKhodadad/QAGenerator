@@ -360,10 +360,10 @@ if __name__ == "__main__":
             os.makedirs(path)
 
     if os.path.exists(config.data_path) or config.data_path.lower().endswith(".csv"):
-        data_df = pd.read_csv(config.data_path).head(10)
+        data_df = pd.read_csv(config.data_path)
     else:
         hf_dataset = load_dataset(config.data_path, name=config.hf_config_name)
-        data_df = hf_dataset["train"].to_pandas().head(10)
+        data_df = hf_dataset["train"].to_pandas()
 
     if args.stage == "submit":
 
@@ -405,5 +405,5 @@ if __name__ == "__main__":
                 response_df[col] = response_df[col].astype(data_df[col].dtype)
 
         merged_df = pd.merge(data_df, response_df, on=config.id_columns, how="inner")
-        output_csv = os.path.join(config.root_dir, "output.csv")
+        output_csv = os.path.join(os.path.basename(config.root_dir), "output.csv")
         merged_df.to_csv(output_csv, index=False)
