@@ -405,5 +405,6 @@ if __name__ == "__main__":
                 response_df[col] = response_df[col].astype(data_df[col].dtype)
 
         merged_df = pd.merge(data_df, response_df, on=config.id_columns, how="inner")
-        output_csv = os.path.join(os.path.basename(config.root_dir), "output.csv")
+        output_csv = os.path.join(os.path.join(
+            config.root_dir, f"{os.path.basename(config.root_dir)}.csv"))
         merged_df.to_csv(output_csv, index=False)
