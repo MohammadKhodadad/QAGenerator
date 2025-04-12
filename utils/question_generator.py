@@ -23,6 +23,7 @@ def ask_openai_batch(client, prompts, temperature: float = 0.7) -> list:
         response = client.chat.completions.create(
             messages=messages,
             model="o3-mini",
+            reasoning_effort="low"
         )
         return response.choices[0].message.content.strip()
     
