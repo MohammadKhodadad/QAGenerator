@@ -11,7 +11,7 @@ def main():
     print(f"Loaded {len(texts)} texts from ChemRxiv-Paragraphs 'cc-by-nc' split 'train'.")
 
 
-    output_file = os.path.join("data", "chemrxiv_questions_v1.json")
+    output_file = os.path.join("data","chemrxiv_questions_v1.json")
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise ValueError("OPENAI_API_KEY environment variable is not set.")
@@ -20,6 +20,7 @@ def main():
         texts=texts[:10],
         client=client,
         output_file=output_file,
+        low_difficulty_prob=1.0,
     )
     print(f"Saved {len(qa_list)} QA pairs to {output_file}.")
 
