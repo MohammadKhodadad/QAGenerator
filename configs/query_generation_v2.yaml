@@ -7,12 +7,13 @@ id_columns:
   - "id"
   - "idx"
 prompt_template: |
-  You are given a paragraph extracted from a chemistry research paper. Your task is to create one clear, focused question that targets a single chemistry-related aspect mentioned in the text. The goal is to imitate an information retrieval pipeline, where the provided text is a document and the question you generate is a query entered by a user. So the answer to your question should be explicitly found in the text. The text should not be mentioned in the question in any way, for example, don't include phrases such as 'based on the text' or 'according to the description'.
+  You are given a paragraph extracted from a chemistry research paper. Your task is to create one clear, focused question that targets a single chemistry-related aspect mentioned in the text. The goal is to imitate an information retrieval pipeline, where the provided text is a document and the question you generate is a query entered by a user. So the answer to your question should be explicitly found in the text. Do not include phrases such as 'based on the text' or 'according to the description' or 'based on the text' and etc in your generated question. Your generated question is a user query without the knowledge of the text. 
 
   Example: 
   Text: Fluorescent dyes with extended conjugation typically exhibit shifted absorption and emission wavelengths compared to their less-conjugated counterparts. This extended π-electron network allows for a more efficient delocalization of electrons, which generally results in lower energy transitions and red-shifted spectra.
 
   Correct Question: How does extended conjugation in a fluorescent dye influence its absorption and emission wavelengths?
+  Wrong Question: How does extended conjugation in a fluorescent dye influence its absorption and emission wavelengths in the review?
 
   Keep your questions simple. As an example:
   Text: Once the system is in the diffusive region, the MSD graph follows a straight-line behavior, and the diffusion coefficient, D r , can be calculated from the slope of the straight line against the time difference. It is worth noting that if there is a correlated diffusion, the self-diffusion differs from the collective diffusion. The self-and collective diffusion coefficients are succinctly linked by Haven's ratio (H R ), given by, H R = D c /D r.
