@@ -44,7 +44,7 @@ class Config(BaseModel):
     )
     shard_size: int = Field(
         50000,
-        description="Number of records per shard for generating requests. Default is 50,000 (max for OpenAI)."
+        description="Number of records per shard for generating requests. Default is 50,000 (max for OpenAI).",
     )
 
     @field_validator("data_path")
@@ -219,6 +219,7 @@ def extract_responses_to_df(responses_path: str, id_columns: list[str]) -> pd.Da
 
     rows = []
     total_completion_tokens = 0
+    failed = 0
 
     for line in merged_lines:
         data = json.loads(line)
@@ -229,6 +230,10 @@ def extract_responses_to_df(responses_path: str, id_columns: list[str]) -> pd.Da
             continue
         message = choices[0].get("message", {})
         response_text = message.get("content", "")
+        refusal = message.get("refusal", None)
+        if response_text is None and refusal is not None:
+            failed += 1
+            continue
         usage = response_body.get("usage", {})
         completion_tokens = usage.get("completion_tokens", 0)
         total_completion_tokens += completion_tokens
@@ -245,7 +250,7 @@ def extract_responses_to_df(responses_path: str, id_columns: list[str]) -> pd.Da
         row["generated_query"] = JsonOutputParser().invoke(response_text)["question"]
 
         rows.append(row)
-
+    print(f"Null responses: {failed}")
     print(f"Total completion tokens: {total_completion_tokens}")
     return pd.DataFrame(rows)
 
@@ -400,6 +405,7 @@ if __name__ == "__main__":
                 response_df[col] = response_df[col].astype(data_df[col].dtype)
 
         merged_df = pd.merge(data_df, response_df, on=config.id_columns, how="inner")
-        output_csv = os.path.join(os.path.join(
-            config.root_dir, f"{os.path.basename(config.root_dir)}.csv"))
+        output_csv = os.path.join(
+            os.path.join(config.root_dir, f"{os.path.basename(config.root_dir)}.csv")
+        )
         merged_df.to_csv(output_csv, index=False)
