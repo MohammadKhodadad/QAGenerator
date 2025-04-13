@@ -2,6 +2,7 @@ data_path: "BASF-AI/ChemRxiv-Paragraphs"
 hf_config_name: cc-by
 root_dir: "chemrxiv_ccby_train"
 model: "o3-mini"
+shard_size: 40000
 text_column: "paragraph"
 id_columns:
   - "id"

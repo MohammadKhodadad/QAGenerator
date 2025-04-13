@@ -42,6 +42,10 @@ class Config(BaseModel):
         ...,
         description="Dictionary of OpenAI API call parameters (e.g. `temperature`, `reasoning_effort`).",
     )
+    shard_size: int = Field(
+        50000,
+        description="Number of records per shard for generating requests. Default is 50,000 (max for OpenAI)."
+    )
 
     @field_validator("data_path")
     def validate_data_path(cls, v):
@@ -68,23 +72,17 @@ def get_client() -> OpenAI:
 def generate_requests(
     data: pd.DataFrame,
     output_path: str,
-    text_column: str,
-    prompt_template: str,
-    model: str,
+    config: Config,
     response_format: Union[BaseModel, dict],
-    params: dict,
 ):
     """
-    Generates request shards for the given data and saves them to the output path.
+    Generates request shards for the given data using the provided configuration.
 
     Args:
         data (pd.DataFrame): DataFrame containing the data.
-        output_path (str): Output file path to save the generated requests.
-        text_column (str):
-        template (str): Template for the query.
-        model (str): Model name to use for the query generation.
-        response_format (BaseModel or str): Response format model or string.
-        model (str): Model name to use for the query generation.
+        output_path (str): The file path where the generated request JSONL files will be saved.
+        config (Config): A configuration instance containing settings like text_column, template, model, params, shard_size, and root_dir.
+        response_format (BaseModel or str): Response format model or string for query generation.
     """
     input_tokens = 0
     SHARD_SIZE = 50_000
@@ -92,7 +90,7 @@ def generate_requests(
         dataset_slice = data.iloc[shard_start : shard_start + SHARD_SIZE]
         shard_num = shard_start // SHARD_SIZE
         for i, row in dataset_slice.iterrows():
-            prompt = prompt_template.format(text=row[text_column])
+            prompt = config.prompt_template.format(text=row[config.text_column])
             with open(
                 os.path.join(output_path, f"shard-{shard_num:03d}.jsonl"), "a"
             ) as f:
@@ -101,15 +99,15 @@ def generate_requests(
                     "method": "POST",
                     "url": "/v1/chat/completions",
                     "body": {
-                        "model": model,
+                        "model": config.model,
                         "messages": [{"role": "user", "content": prompt}],
                         "response_format": response_format
                         if isinstance(response_format, dict)
                         else response_format.model_json_schema(),
-                        **params,
+                        **config.params,
                     },
                 }
-                if model in ["o3", "o3-mini", "o1", "o1-mini"]:
+                if config.model in ["o3", "o3-mini", "o1", "o1-mini"]:
                     task["body"].pop("temperature")
                 f.write(json.dumps(task) + "\n")
                 input_tokens += count_tokens(prompt)
@@ -381,11 +379,8 @@ if __name__ == "__main__":
         generate_requests(
             data=data_df,
             output_path=requests_path,
-            text_column=config.text_column,
-            prompt_template=config.prompt_template,
-            model=config.model,
+            config=config,
             response_format=QueryGeneration,
-            params=config.params,
         )
         print("Submitting requests...")
         generate_batch_jobs(requests_path, batch_details_path)

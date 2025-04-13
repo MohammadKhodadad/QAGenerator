@@ -1,7 +1,8 @@
 data_path: "BASF-AI/ChemRxiv-Paragraphs"
 hf_config_name: cc-by
-root_dir: "chemrxiv_ccby_train"
+root_dir: "chemrxiv_ccby_train_main"
 model: "o3-mini"
+shard_size: 40000
 text_column: "paragraph"
 id_columns:
   - "id"
@@ -31,4 +32,4 @@ prompt_template: |
   Input Text: {text}
 params:
   temperature: 0.0
-  reasoning_effort: "low"   
+  reasoning_effort: "low"
