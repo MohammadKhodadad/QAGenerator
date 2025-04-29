@@ -26,10 +26,10 @@ prompt_template: |
   Wrong Question: Why does the work intentionally avoid focusing on the quality of the quantum chemical level of theory?
 
   In this question, the phrase 'the work' creates ambiguity when the original text is not provided. The question should be meaningful independently while still having an answer that is fully contained within the paragraph. These kinds of questions should be avoided. Avoid refereing to text or study. Since the questions should mimic the real world scnearios, the question should have meaning without the text. However, its answer should be inside the text. Do not generate genral questions about the paper.
-  Also, since the paragraphs are extracted from papers and they are not preprocessed, the paragraph might lack any chemistry-relevant content. In such scenarios, pass an empty string for the question. 
+  Also, since the paragraphs are extracted from papers and they are not preprocessed, the paragraph might lack chemistry-related content or may refer to tables, figures, or other elements from which might not be possible to generate a self-contained question without refering to text directly. In such scenarios, pass an empty string for the question. 
 
 
-  Now it's your time to answer. Provide a JSON with `question` as the key and the generated question as the value.
+  Now it's your time to answer. Think step by step. Provide a JSON with `question` as the key and the generated question as the value.
   
   Text: {text}
 params:
