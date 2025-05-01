@@ -30,7 +30,10 @@ prompt_template: |
 
 
   Now it's your time to answer. In your response only provide a JSON with `question` as the key and the generated question as the value.
-  
+  For example:
+  {
+    "question": "What is the role of the extended π-electron network in fluorescent dyes?"
+  }
   Text: {text}
 params:
   temperature: 0.0
