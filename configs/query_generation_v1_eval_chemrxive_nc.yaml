@@ -1,7 +1,7 @@
 data_path: "BASF-AI/ChemRxiv-Paragraphs"
 root_dir: "eval_chemrxiv_nc"
 hf_config_name: cc-by-nc
-model: "gpt-4.1-nano"
+model: "o3-mini"
 shard_size: 40000
 text_column: "paragraph"
 id_columns:
