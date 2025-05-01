@@ -29,7 +29,7 @@ prompt_template: |
   Also, since the paragraphs are extracted from papers and they are not preprocessed, the paragraph might lack chemistry-related content or may refer to tables, figures, or other elements from which might not be possible to generate a self-contained question without refering to text directly. In such scenarios, pass an empty string for the question. 
 
 
-  Now it's your time to answer. Think step by step. Provide a JSON with `question` as the key and the generated question as the value.
+  Now it's your time to answer. In your response only provide a JSON with `question` as the key and the generated question as the value.
   
   Text: {text}
 params:
