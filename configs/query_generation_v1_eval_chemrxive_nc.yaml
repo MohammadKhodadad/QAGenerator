@@ -25,15 +25,16 @@ prompt_template: |
   Text: As is widely known in the community and seen in our previous studies, B3LYP-GD3BJ with small Pople-style basis sets and implicit solvation with CPCM systematically underestimates the free energies of activation of enzyme mechanisms compared to the experimental kinetic value. A focus on the quality of the quantum chemical level of theory is purposefully avoided in this work, to instead efficiently provide insight about QM-cluster model building approaches.
   Wrong Question: Why does the work intentionally avoid focusing on the quality of the quantum chemical level of theory?
 
-  In this question, the phrase 'the work' creates ambiguity when the original text is not provided. The question should be meaningful independently while still having an answer that is fully contained within the paragraph. These kinds of questions should be avoided. Avoid refereing to text or study. Since the questions should mimic the real world scnearios, the question should have meaning without the text. However, its answer should be inside the text. Do not generate genral questions about the paper.
+  In this question, the phrase 'the work' creates ambiguity when the original text is not provided. The question should be meaningful independently while still having an answer that is fully contained within the paragraph. These kinds of questions should be avoided. Avoid refereing to text or study directly in your generated question. Since the questions should mimic the real world scnearios, the question should have meaning without the text. However, its answer should be inside the text. Do not generate genral questions about the paper.
   Also, since the paragraphs are extracted from papers and they are not preprocessed, the paragraph might lack chemistry-related content or may refer to tables, figures, or other elements from which might not be possible to generate a self-contained question without refering to text directly. In such scenarios, pass an empty string for the question. 
 
 
-  Now it's your time to answer. In your response only provide a JSON with `question` as the key and the generated question as the value.
+  In your response only provide a JSON with `question` as the key and the generated question as the value.
   For example:
   {{
     "question": "What is the role of the extended π-electron network in fluorescent dyes?"
   }}
+  Now it's your time to answer. 
   Text: {text}
 params:
   temperature: 0.0

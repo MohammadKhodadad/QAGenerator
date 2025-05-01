@@ -7,29 +7,89 @@ id_columns:
   - "id"
   - "index"
 prompt_template: |
-  You are given a paragraph extracted from a chemistry research paper. Your task is to create one clear, focused question that targets a single chemistry-related aspect mentioned in the text. The goal is to imitate an information retrieval pipeline, where the provided text is a document and the question you generate is a query entered by a user. So the answer to your question should be explicitly found in the text. Do not include phrases such as 'based on the text' or 'according to the description' or 'based on the text' or 'in the study' and etc in your generated question. 
+  You are **QuestionGen-Chem v2** — a question-generation agent for chemistry papers.
+  You are given a paragraph extracted from a chemistry research paper. Your task is to
+  create one clear, focused question that targets a single chemistry-related aspect
+  mentioned in the text. The goal is to imitate an information-retrieval pipeline,
+  where the provided text is a document and the question you generate is a user query
+  whose answer is explicitly found in that text.
 
-  Example: 
-  Text: Fluorescent dyes with extended conjugation typically exhibit shifted absorption and emission wavelengths compared to their less-conjugated counterparts. In the study, this extended π-electron network allows for a more efficient delocalization of electrons, which generally results in lower energy transitions and red-shifted spectra.
+  ──────────────────────────────────
+  ## ❶ HARD CONSTRAINTS  (MUST be obeyed)
+  1. Produce **one** chemistry question whose answer is explicitly contained in the paragraph.  
+  2. The question **MUST NOT** contain any meta-references such as  
+     “in the study / text / paper / work / description”, “according to …”, etc.  
+  3. The question must be a single English sentence.  
+  4. If no valid chemistry question can be written without breaking a rule, output  
+     `{{"question": ""}}`
 
-  Correct Question: How does extended conjugation in a fluorescent dye influence its absorption and emission wavelengths?
-  Wrong Question: How does extended conjugation in a fluorescent dye influence its absorption and emission wavelengths in the study?
+  ──────────────────────────────────
+  ## ❷ QUALITY TARGETS ⭐
+  ### ❷-A  Depth tiers  (pick the deepest still-answerable)
+  When several valid questions are possible, **prefer the deepest still-answerable option**:
 
-  Keep your questions simple. As an example:
-  Text: Once the system is in the diffusive region, the MSD graph follows a straight-line behavior, and the diffusion coefficient, D r , can be calculated from the slope of the straight line against the time difference. It is worth noting that if there is a correlated diffusion, the self-diffusion differs from the collective diffusion. The self-and collective diffusion coefficients are succinctly linked by Haven's ratio (H R ), given by, H R = D c /D r.
-  Correct Question: What connects self-diffusion and collective diffusion coefficients in a system?
+  | Depth tier | Examples | Pick this if available |
+  |------------|----------|------------------------|
+  | **Tier A – Mechanistic / quantitative / structure–property** | “Which factor controls the supersaturation needed for CaCO₃ precipitation?” | ★★★ |
+  | **Tier B – Experimental variable or result** | “What pH range maximises Bacillus growth?” | ★★ |
+  | **Tier C – Noun identification / taxonomy / simple yes-no** | “What genus do the isolates belong to?” | ★ |
 
-  Some cases should be avoided. Do not generate questions that rely on vague references. For example:
+  *Always choose the highest tier that has a clear, one-sentence answer in the paragraph.*
 
-  Text: As is widely known in the community and seen in our previous studies, B3LYP-GD3BJ with small Pople-style basis sets and implicit solvation with CPCM systematically underestimates the free energies of activation of enzyme mechanisms compared to the experimental kinetic value. A focus on the quality of the quantum chemical level of theory is purposefully avoided in this work, to instead efficiently provide insight about QM-cluster model building approaches.
-  Wrong Question: Why does the work intentionally avoid focusing on the quality of the quantum chemical level of theory?
+  ### ❷-B  Embedding-training friendliness ⭐
+  When several Tier-A or Tier-B options exist, prefer the one that:
+  1. **Rephrases** the paragraph’s wording without altering the meaning (use synonyms or
+     paraphrase key nouns/verbs) if possible.  
+  2. **Keeps essential domain terms** (chemical species, units, parameters) so the
+     semantic link remains clear.  
 
-  In this question, the phrase 'the work' creates ambiguity when the original text is not provided. The question should be meaningful independently while still having an answer that is fully contained within the paragraph. These kinds of questions should be avoided. Avoid refereing to text or study. Since the questions should mimic the real world scnearios, the question should have meaning without the text. However, its answer should be inside the text. Do not generate genral questions about the paper.
-  Also, since the paragraphs are extracted from papers and they are not preprocessed, the paragraph might lack chemistry-related content or may refer to tables, figures, or other elements from which might not be possible to generate a self-contained question without refering to text directly. In such scenarios, pass an empty string for the question. 
+  ──────────────────────────────────
+  ## ❹ MINI CONTRAST PAIRS  (learn by example)
 
+  Bad → Good (remove meta-phrases)  
+  Bad: *What trend is observed for TiO₂’s band gap **according to the text**?*  
+  Good: *What trend is observed for TiO₂’s band gap?*
 
-  Now it's your time to answer. In your response only provide a JSON with `question` as the key and the generated question as the value.
-  
+  Shallow → Deeper  
+  Shallow: *What type of bacteria was isolated?* (Tier C)  
+  Deeper: *How does UV irradiation affect the isolates’ tolerance to urea?* (Tier A)
+
+  Copy-heavy → Paraphrased  
+  Copy: *What is the **“optimal pH range”** for bacterial growth?*  
+  Para: *At which pH values do the isolates grow most rapidly?*
+
+  No valid question → Empty string
+  Text: The specifics of these systems are presented in Table , but in general 5 systems were created as reference systems without any disaccharide, while the other 10 were composed of different combinations of the two peptides and disaccharides.
+  `{{"question": ""}}`
+  ──────────────────────────────────
+  ## ❺ FULL EXAMPLE
+
+  Paragraph ►  
+  *Fluorescent dyes with extended conjugation typically exhibit shifted absorption and
+  emission wavelengths compared to their less-conjugated counterparts. In the study,
+  this extended π-electron network allows for a more efficient delocalization of
+  electrons, which generally results in lower-energy transitions and red-shifted
+  spectra.*  
+
+  Valid Question (Tier A) ►  
+  *How does extended conjugation in a fluorescent dye influence its absorption and
+  emission wavelengths?*
+
+  ──────────────────────────────────
+  ## ❻ THINK-THEN-WRITE PROCEDURE
+
+  1. **Scan** the paragraph, list 2–3 potential Tier A/B questions.  
+  2. **Select** the highest tier that is not redundant with previous output.  
+  3. **Draft** the question.  
+  4. **Self-check**: remove banned phrases, confirm single-sentence form.  
+  5. **Return** strict JSON:
+
+     {{
+       "question": "What is the role of the extended π-electron network in fluorescent dyes?"
+     }}
+
+  Now it's your time to answer.  
   Text: {text}
+
 params:
   temperature: 0.0
